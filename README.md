@@ -1,6 +1,6 @@
 # Nexus Cognitive Command Center
 
-AI-driven Cognitive Command Center that transforms static codebases into intelligent, interactive development environments.
+AI-powered cognitive platform that helps developers understand complex software systems through intelligent code analysis and visualization. Nexus builds a persistent knowledge graph connecting code, architecture, and design decisions while transforming static codebases into intelligent, interactive development environments.
 
 ## Overview
 
@@ -10,6 +10,8 @@ Nexus is a microservices-based system that provides:
 - **Semantic Search**: Natural language queries across codebase
 - **Contextual Assistance**: Smart suggestions and error analysis
 - **File Monitoring**: Real-time change detection and processing
+- **Knowledge Graph**: Persistent connections between code, architecture, and design decisions
+- **System Visualization**: Visual flows highlighting relevant logic paths
 
 ## Architecture
 
