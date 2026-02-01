@@ -1,0 +1,147 @@
+graph TB
+    %% External Layer
+    Users[👥 Users] --> CF[CloudFront CDN]
+    Users --> APIGW[API Gateway]
+    
+    CF --> ALB[Application Load Balancer]
+    APIGW --> ALB
+    
+    %% VPC Container
+    subgraph VPC["🏢 VPC - Nexus Cognitive Command Center"]
+        
+        %% Application Layer
+        subgraph AppLayer["🚀 Application Layer (ECS Fargate)"]
+            ALB --> APIService[API Gateway Service]
+            APIService --> CodeAnalyzer[📊 Code Analyzer Service]
+            APIService --> DocGen[📝 Documentation Generator]
+            APIService --> SearchEngine[🔍 Search Engine Service]
+            APIService --> ContextProvider[🧠 Context Provider Service]
+            FileWatcher[👁️ File Watcher Service]
+        end
+        
+        %% Event-Driven Architecture
+        subgraph EventLayer["⚡ Event-Driven Architecture"]
+            EventBus[🚌 EventBridge Event Bus]
+            MsgQueue[📬 SQS Message Queue]
+            Notifications[📢 SNS Notifications]
+        end
+        
+        %% Data Layer
+        subgraph DataLayer["💾 Data Layer"]
+            PostgreSQL[(🐘 PostgreSQL<br/>Structured Data)]
+            Redis[(⚡ Redis<br/>Cache & Sessions)]
+            VectorDB[(🔍 OpenSearch<br/>Vector Search)]
+        end
+        
+        %% Storage Layer
+        subgraph StorageLayer["🗄️ Storage Layer"]
+            CodeStorage[📁 S3 Code Repository]
+            DocsStorage[📚 S3 Generated Docs]
+            Artifacts[📦 S3 Build Artifacts]
+        end
+        
+        %% Processing Layer
+        subgraph ProcessingLayer["⚙️ Processing Layer (Lambda)"]
+            IncrementalProcessor[🔄 Incremental Processor]
+            BatchProcessor[📊 Batch Processor]
+            AIInference[🤖 AI Inference Engine]
+        end
+        
+        %% Monitoring & Security
+        subgraph MonitoringLayer["🛡️ Monitoring & Security"]
+            CloudWatch[📈 CloudWatch Monitoring]
+            XRay[🔍 X-Ray Tracing]
+            Cognito[🔐 Cognito Authentication]
+            IAM[🛡️ IAM Access Control]
+        end
+        
+        %% CI/CD Pipeline
+        subgraph CICDLayer["🔧 CI/CD Pipeline"]
+            CodeCommit[📝 CodeCommit Repository]
+            CodeBuild[🏗️ CodeBuild Pipeline]
+        end
+    end
+    
+    %% File Watcher Connections
+    FileWatcher --> EventBus
+    FileWatcher --> CodeStorage
+    
+    %% Event Bus Connections
+    EventBus --> CodeAnalyzer
+    EventBus --> DocGen
+    EventBus --> SearchEngine
+    EventBus --> ContextProvider
+    EventBus --> MsgQueue
+    EventBus --> Notifications
+    
+    %% Core Service Data Connections
+    CodeAnalyzer --> PostgreSQL
+    CodeAnalyzer --> VectorDB
+    CodeAnalyzer --> EventBus
+    CodeAnalyzer --> CodeStorage
+    
+    DocGen --> DocsStorage
+    DocGen --> PostgreSQL
+    DocGen --> EventBus
+    
+    SearchEngine --> VectorDB
+    SearchEngine --> PostgreSQL
+    SearchEngine --> Redis
+    
+    ContextProvider --> PostgreSQL
+    ContextProvider --> VectorDB
+    ContextProvider --> Redis
+    ContextProvider --> AIInference
+    
+    %% Lambda Processing Connections
+    MsgQueue --> IncrementalProcessor
+    MsgQueue --> BatchProcessor
+    IncrementalProcessor --> PostgreSQL
+    IncrementalProcessor --> VectorDB
+    BatchProcessor --> PostgreSQL
+    BatchProcessor --> VectorDB
+    BatchProcessor --> DocsStorage
+    
+    %% Monitoring Connections
+    CodeAnalyzer --> CloudWatch
+    DocGen --> CloudWatch
+    SearchEngine --> CloudWatch
+    ContextProvider --> CloudWatch
+    FileWatcher --> CloudWatch
+    
+    CodeAnalyzer --> XRay
+    DocGen --> XRay
+    SearchEngine --> XRay
+    ContextProvider --> XRay
+    
+    %% Security Connections
+    APIService --> Cognito
+    CodeAnalyzer --> IAM
+    DocGen --> IAM
+    SearchEngine --> IAM
+    ContextProvider --> IAM
+    
+    %% CI/CD Connections
+    CodeCommit --> CodeBuild
+    CodeBuild --> Artifacts
+    CodeBuild --> CodeAnalyzer
+    CodeBuild --> DocGen
+    CodeBuild --> SearchEngine
+    CodeBuild --> ContextProvider
+    
+    %% Styling
+    classDef awsCompute fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:#fff
+    classDef awsDatabase fill:#3F48CC,stroke:#232F3E,stroke-width:2px,color:#fff
+    classDef awsStorage fill:#7AA116,stroke:#232F3E,stroke-width:2px,color:#fff
+    classDef awsNetwork fill:#FF4B4B,stroke:#232F3E,stroke-width:2px,color:#fff
+    classDef awsIntegration fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:#fff
+    classDef awsSecurity fill:#DD344C,stroke:#232F3E,stroke-width:2px,color:#fff
+    classDef awsMonitoring fill:#759C3E,stroke:#232F3E,stroke-width:2px,color:#fff
+    
+    class CodeAnalyzer,DocGen,SearchEngine,ContextProvider,FileWatcher,APIService awsCompute
+    class PostgreSQL,Redis,VectorDB awsDatabase
+    class CodeStorage,DocsStorage,Artifacts awsStorage
+    class ALB,CF,APIGW awsNetwork
+    class EventBus,MsgQueue,Notifications awsIntegration
+    class Cognito,IAM awsSecurity
+    class CloudWatch,XRay awsMonitoring

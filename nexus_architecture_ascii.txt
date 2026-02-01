@@ -1,0 +1,95 @@
+╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                    NEXUS COGNITIVE COMMAND CENTER - AWS ARCHITECTURE                            ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+                                              👥 Users
+                                                 │
+                                    ┌────────────┴────────────┐
+                                    │                         │
+                              ☁️ CloudFront CDN        🌐 API Gateway
+                                    │                         │
+                                    └────────────┬────────────┘
+                                                 │
+                                      ⚖️ Application Load Balancer
+                                                 │
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                          🏢 VPC - Nexus Environment                                               ║
+║                                                                                                                    ║
+║  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────┐  ║
+║  │                                    🚀 APPLICATION LAYER (ECS Fargate)                                      │  ║
+║  │                                                                                                             │  ║
+║  │    🌐 API Gateway Service                                                                                   │  ║
+║  │           │                                                                                                 │  ║
+║  │    ┌──────┼──────┬──────────────┬──────────────┬──────────────┐                                           │  ║
+║  │    │      │      │              │              │              │                                           │  ║
+║  │  📊 Code  📝 Doc  🔍 Search    🧠 Context    👁️ File        │                                           │  ║
+║  │  Analyzer Generator Engine     Provider     Watcher        │                                           │  ║
+║  │  Service  Service  Service     Service      Service        │                                           │  ║
+║  └─────────────────────────────────────────────────────────────────────────────────────────────────────────────┘  ║
+║                                                 │                                                                  ║
+║  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────┐  ║
+║  │                                ⚡ EVENT-DRIVEN ARCHITECTURE                                                │  ║
+║  │                                                                                                             │  ║
+║  │    🚌 EventBridge Event Bus  ←→  📬 SQS Message Queue  ←→  📢 SNS Notifications                          │  ║
+║  └─────────────────────────────────────────────────────────────────────────────────────────────────────────────┘  ║
+║                                                 │                                                                  ║
+║  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────┐  ║
+║  │                                    ⚙️ PROCESSING LAYER (Lambda)                                           │  ║
+║  │                                                                                                             │  ║
+║  │    🔄 Incremental Processor  ←→  📊 Batch Processor  ←→  🤖 AI Inference Engine                          │  ║
+║  └─────────────────────────────────────────────────────────────────────────────────────────────────────────────┘  ║
+║                                                 │                                                                  ║
+║  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────┐  ║
+║  │                                        💾 DATA LAYER                                                       │  ║
+║  │                                                                                                             │  ║
+║  │    🐘 PostgreSQL        ⚡ Redis           🔍 OpenSearch                                                   │  ║
+║  │    (RDS)                (ElastiCache)      (Vector Search)                                                 │  ║
+║  │    Structured Data      Cache & Sessions   Semantic Search                                                 │  ║
+║  └─────────────────────────────────────────────────────────────────────────────────────────────────────────────┘  ║
+║                                                 │                                                                  ║
+║  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────┐  ║
+║  │                                      🗄️ STORAGE LAYER                                                     │  ║
+║  │                                                                                                             │  ║
+║  │    📁 S3 Code Repository  ←→  📚 S3 Generated Docs  ←→  📦 S3 Build Artifacts                            │  ║
+║  └─────────────────────────────────────────────────────────────────────────────────────────────────────────────┘  ║
+║                                                                                                                    ║
+║  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────┐  ║
+║  │                                   🛡️ MONITORING & SECURITY                                                │  ║
+║  │                                                                                                             │  ║
+║  │  📈 CloudWatch    🔍 X-Ray      🔐 Cognito        🛡️ IAM                                                 │  ║
+║  │  Monitoring       Tracing       Authentication    Access Control                                           │  ║
+║  └─────────────────────────────────────────────────────────────────────────────────────────────────────────────┘  ║
+║                                                                                                                    ║
+║  ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────┐  ║
+║  │                                      🔧 CI/CD PIPELINE                                                     │  ║
+║  │                                                                                                             │  ║
+║  │    📝 CodeCommit Repository  →  🏗️ CodeBuild Pipeline  →  📦 Deployment                                  │  ║
+║  └─────────────────────────────────────────────────────────────────────────────────────────────────────────────┘  ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+KEY DATA FLOWS:
+═══════════════
+
+1. FILE CHANGE FLOW:
+   File Change → File Watcher → EventBridge → Services → Database Updates → User Notifications
+
+2. SEARCH QUERY FLOW:
+   User Query → API Gateway → Search Engine → Vector DB + PostgreSQL → Ranked Results
+
+3. DOCUMENTATION FLOW:
+   Code Analysis → EventBridge → Doc Generator → S3 Storage → Search Index Update
+
+4. REAL-TIME PROCESSING:
+   EventBridge → SQS → Lambda Processors → Database Updates → Notifications
+
+ARCHITECTURE BENEFITS:
+═════════════════════
+
+✅ Microservices: Independent scaling and deployment
+✅ Event-Driven: Loose coupling and resilience
+✅ Multi-Database: Optimized for different data types
+✅ Serverless Processing: Cost-effective and auto-scaling
+✅ Managed Services: Reduced operational overhead
+✅ Security: Multi-layered security approach
+✅ Monitoring: Comprehensive observability
+✅ CI/CD: Automated deployment pipeline
